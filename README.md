@@ -1,6 +1,6 @@
 # GitHub Action for the Rightbrain AI Tasks API
 
-This GitHub Action allows you to run you [Rightbrain AI](https://rightbrain.ai/)
+This GitHub Action allows you to run [Rightbrain AI](https://rightbrain.ai/)
 Tasks within your GitHub Actions Workflows.
 
 ## Understanding the Action
