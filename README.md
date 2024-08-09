@@ -5,11 +5,9 @@ multimodal inputs (text and/or images) using predefined prompts. These endpoints
 generate structured, configurable outputs, tailored to the developer’s specific
 requirements.
 
-You can read more about Rightbrain AI Tasks over on the
-[docs](https://docs.rightbrain.ai).
+You can read more about Rightbrain AI Tasks over on the [Rightbrain AI docs](https://docs.rightbrain.ai).
 
-This GitHub Action allows you to run your
-[Rightbrain AI](https://rightbrain.ai/) Tasks within GitHub Actions Workflows.
+This GitHub Action allows you to run your [Rightbrain AI](https://rightbrain.ai/) Tasks within GitHub Actions Workflows.
 
 ## Understanding the Action
 
