@@ -51,7 +51,7 @@ When called, the Action will return a string containing the full JSON response
 from the API as detailed over on the
 [Rightbrain AI docs](https://rightbrain.docs.buildwithfern.com/api-reference/tasks/run-task).
 
-Here's a simple exmaple of using the JSON response in a GitHub Actions Workflow,
+Here's a simple example of using the JSON response in a GitHub Actions Workflow,
 where a previously created Rightbrain Task has an input of `subject` and an
 output of `joke` defined:
 
