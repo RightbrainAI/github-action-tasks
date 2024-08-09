@@ -7,7 +7,7 @@ inputs:
     description: The unique Access Token for the Task
     required: true
   task-input:
-    description: The defined input for the Task
+    description: The defined input for the Task as a JSON encoded object
     required: true
   task-api-host:
     description: The hostname for the Rightbrain AI Tasks API
@@ -16,7 +16,7 @@ inputs:
 
 outputs:
   response:
-    description: The Rightbrain AI Tasks API response
+    description: The Rightbrain AI Tasks API response as a JSON encoded object
 
 runs:
   using: node20

@@ -24967,7 +24967,7 @@ function Client(host, accessToken) {
         `Error running Task, expected status code of 200, but got ${response.status}`
       )
     }
-    return await response.json().response
+    return await response.json()
   }
   this.getTaskRunURL = function () {
     return `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
