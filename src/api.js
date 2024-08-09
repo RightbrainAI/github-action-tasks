@@ -27,9 +27,14 @@ function Client(host, accessToken) {
   this.host = host
   this.accessToken = new AccessToken(accessToken)
   this.Run = async function (taskInput) {
+    if (this.isInvalidTaskInputJSON(taskInput)) {
+      throw new Error(
+        'Error running Task, expected task input to be valid JSON data'
+      )
+    }
     const formData = new FormData()
-    formData.append('task_input', JSON.stringify(taskInput))
-    const response = await fetch(this.GetTaskRunURL(), {
+    formData.append('task_input', taskInput)
+    const response = await fetch(this.getTaskRunURL(), {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${this.accessToken.String()}`
@@ -43,8 +48,16 @@ function Client(host, accessToken) {
     }
     return await response.json().response
   }
-  this.GetTaskRunURL = function () {
+  this.getTaskRunURL = function () {
     return `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
+  }
+  this.isInvalidTaskInputJSON = function (taskInput) {
+    try {
+      JSON.parse(taskInput)
+    } catch (e) {
+      return true
+    }
+    return false
   }
 }
 
