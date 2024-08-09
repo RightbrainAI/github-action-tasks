@@ -6,11 +6,11 @@ Tasks within your GitHub Actions Workflows.
 ## Understanding the Action
 
 The action defined in the action.yml file interacts with the Rightbrain AI Tasks
-API. It requires three inputs:
+API. It supports three inputs:
 
     task-access-token (required): A unique access token for authentication.
     task-input (required): A JSON encoded object that defines the input for the task.
-    task-api-host (Optional): The hostname for the Rightbrain AI Tasks API, with a default value of app.rightbrain.ai.
+    task-api-host (optional): The hostname for the Rightbrain AI Tasks API, with a default value of app.rightbrain.ai.
 
 ## Example of a Workflow to Run a Task
 
