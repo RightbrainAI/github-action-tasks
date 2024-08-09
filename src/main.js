@@ -11,7 +11,7 @@ async function run() {
       core.getInput('task-api-host'),
       core.getInput('task-access-token')
     )
-    core.setOutput('response', client.Run(core.getInput('task-input')))
+    core.setOutput('response', await client.Run(core.getInput('task-input')))
   } catch (error) {
     core.setFailed(error.message)
   }
