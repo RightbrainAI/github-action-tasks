@@ -1,16 +1,25 @@
 # GitHub Action for the Rightbrain AI Tasks API
 
-This GitHub Action allows you to run [Rightbrain AI](https://rightbrain.ai/)
-Tasks within your GitHub Actions Workflows.
+Rightbrain AI Tasks allow developers to create custom API endpoints that process
+multimodal inputs (text and/or images) using predefined prompts. These endpoints
+generate structured, configurable outputs, tailored to the developer’s specific
+requirements.
+
+You can read more about Rightbrain AI Tasks over at the
+[docs](https://docs.rightbrain.ai).
+
+This GitHub Action allows you to run your
+[Rightbrain AI](https://rightbrain.ai/) Tasks within GitHub Actions Workflows.
 
 ## Understanding the Action
 
-The action defined in the action.yml file interacts with the Rightbrain AI Tasks
-API. It supports three inputs:
+This GitHub Action supports three inputs:
 
     task-access-token (required): A unique access token for authentication.
     task-input (required): A JSON encoded object that defines the input for the task.
     task-api-host (optional): The hostname for the Rightbrain AI Tasks API, with a default value of app.rightbrain.ai.
+
+Note: At the moment this Action does _NOT_ support file inputs to the API.
 
 ## Example of a Workflow to Run a Task
 
