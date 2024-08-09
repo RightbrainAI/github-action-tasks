@@ -1,7 +1,7 @@
 # GitHub Action for the Rightbrain AI Tasks API
 
-This GitHub Action allows you to run you Rightbrain AI Tasks within GitHub
-Actions Workflows.
+This GitHub Action allows you to run you [Rightbrain AI](https://rightbrain.ai/)
+Tasks within your GitHub Actions Workflows.
 
 ## Understanding the Action
 
@@ -12,7 +12,7 @@ API. It requires three inputs:
     task-input (required): A JSON encoded object that defines the input for the task.
     task-api-host (Optional): The hostname for the Rightbrain AI Tasks API, with a default value of app.rightbrain.ai.
 
-## Example of a Workflow to Run the Action
+## Example of a Workflow to Run a Task
 
 ```yaml
 name: Run Rightbrain AI Task
