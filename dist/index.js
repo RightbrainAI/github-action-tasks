@@ -24947,9 +24947,9 @@ function AccessToken(accessToken) {
 function Client(host, accessToken) {
   this.host = host
   this.accessToken = new AccessToken(accessToken)
-  this.Run = async function (task_input) {
+  this.Run = async function (taskInput) {
     const formData = new FormData()
-    formData.append('task_input', JSON.stringify(task_input))
+    formData.append('task_input', JSON.stringify(taskInput))
     const response = await fetch(this.GetTaskRunURL(), {
       method: 'POST',
       headers: {
