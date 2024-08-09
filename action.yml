@@ -10,7 +10,7 @@ inputs:
     description: The defined input for the Task
     required: true
   task-api-host:
-    description: The hostname for Rightbrain AI Tasks API
+    description: The hostname for the Rightbrain AI Tasks API
     required: true
     default: app.rightbrain.ai
 

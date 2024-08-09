@@ -24989,7 +24989,7 @@ const { Client } = __nccwpck_require__(612)
 async function run() {
   try {
     const client = new Client(
-      core.getInput('task-api-host-token'),
+      core.getInput('task-api-host'),
       core.getInput('task-access-token')
     )
     core.setOutput('response', client.Run(core.getInput('task-input')))
