@@ -1,9 +1,6 @@
 # GitHub Action for the Rightbrain AI Tasks API
 
-Rightbrain AI Tasks allow developers to create custom API endpoints that process
-multimodal inputs (text and/or images) using predefined prompts. These endpoints
-generate structured, configurable outputs, tailored to the developer’s specific
-requirements.
+Rightbrain AI Tasks allow developers to create custom API endpoints that process multimodal inputs (text and/or images) using predefined prompts. These endpoints generate structured, configurable outputs, tailored to the developer’s specific requirements.
 
 You can read more about Rightbrain AI Tasks over on the [Rightbrain AI docs](https://docs.rightbrain.ai).
 
@@ -45,13 +42,9 @@ jobs:
         run: echo ${{ steps.run-task.outputs.response }}
 ```
 
-When called, the Action will return a string containing the full JSON response
-from the API as detailed over on the
-[Rightbrain AI docs](https://rightbrain.docs.buildwithfern.com/api-reference/tasks/run-task).
+When called, the Action will return a string containing the full JSON response from the API as detailed over on the [Rightbrain AI docs](https://rightbrain.docs.buildwithfern.com/api-reference/tasks/run-task).
 
-Here's a simple example of using the JSON response in a GitHub Actions Workflow,
-where a previously created Rightbrain Task has an input of `subject` and an
-output of `joke` defined:
+Here's a simple example of using the JSON response in a GitHub Actions Workflow, where a previously created Rightbrain Task has an input of `subject` and an output of `joke` defined:
 
 ```yaml
 on:
