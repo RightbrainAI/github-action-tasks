@@ -24965,7 +24965,7 @@ function Client(host, accessToken) {
     return await response.json().response
   }
   this.GetTaskRunURL = function () {
-    return `https://${this.host}/api/v1/org/${this.accessToken.GetProjectIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
+    return `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
   }
 }
 
