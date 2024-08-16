@@ -1,5 +1,11 @@
 function AccessToken(accessToken) {
   this.accessToken = accessToken
+  this.GetProjectIdentifier = function () {
+    return this.DecodeAccessToken().ext.project_id
+  }
+  this.GetOrganizationIdentifier = function () {
+    return this.DecodeAccessToken().ext.org_id
+  }
   this.GetTaskIdentifer = function () {
     for (const aud of this.DecodeAccessToken().aud) {
       if (aud.includes('https://aud.rightbrain.ai/tasks/')) {
@@ -7,12 +13,6 @@ function AccessToken(accessToken) {
       }
     }
     throw new Error('access token contains no task identifier')
-  }
-  this.GetProjectIdentifier = function () {
-    return this.DecodeAccessToken().ext.project_id
-  }
-  this.GetOrganizationIdentifier = function () {
-    return this.DecodeAccessToken().ext.org_id
   }
   this.DecodeAccessToken = function () {
     const data = this.accessToken.split('.')[1]
@@ -49,7 +49,16 @@ function Client(host, accessToken) {
     return await response.json()
   }
   this.getTaskRunURL = function () {
-    return `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
+    return `https://${this.host}/api/v1/org/${this.GetOrganizationIdentifier()}/project/${this.GetProjectIdentifier()}/task/${this.GetTaskIdentifer()}/run`
+  }
+  this.GetProjectIdentifier = function () {
+    return this.accessToken.GetProjectIdentifier()
+  }
+  this.GetOrganizationIdentifier = function () {
+    return this.accessToken.GetOrganizationIdentifier()
+  }
+  this.GetTaskIdentifer = function () {
+    return this.accessToken.GetTaskIdentifer()
   }
   this.isInvalidTaskInputJSON = function (taskInput) {
     try {

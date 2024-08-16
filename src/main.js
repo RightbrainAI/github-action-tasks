@@ -11,8 +11,21 @@ async function run() {
       core.getInput('task-api-host'),
       core.getInput('task-access-token')
     )
-    core.setOutput('response', await client.Run(core.getInput('task-input')))
+    core.info('Created Rightbrain AI Tasks client:')
+    core.info(`Organization: ${client.GetOrganizationIdentifier()}`)
+    core.info(`Project: ${client.GetProjectIdentifier()}`)
+    core.info(`Task: ${client.GetTaskIdentifer()}`)
+
+    core.debug('Running Task')
+    const response = await client.Run(core.getInput('task-input'))
+    core.debug('---')
+    core.debug(response)
+    core.debug('---')
+
+    core.debug('Task completed')
+    core.setOutput('response', response)
   } catch (error) {
+    core.error('Failed to run Task', error)
     core.setFailed(error.message)
   }
 }
