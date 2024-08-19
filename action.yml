@@ -1,0 +1,23 @@
+name: GitHub Action for Tasks
+description: A GitHub Action to interact with the Rightbrain AI Tasks API
+author: Rightbrain AI
+
+inputs:
+  task-access-token:
+    description: The unique Access Token for the Task
+    required: true
+  task-input:
+    description: The defined input for the Task as a JSON encoded object
+    required: true
+  task-api-host:
+    description: The hostname for the Rightbrain AI Tasks API
+    required: true
+    default: app.rightbrain.ai
+
+outputs:
+  response:
+    description: The Rightbrain AI Tasks API response as a JSON encoded object
+
+runs:
+  using: node20
+  main: dist/index.js
