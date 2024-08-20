@@ -25040,17 +25040,17 @@ async function run() {
       )
     }
 
+    core.debug('Task Input:')
+    core.debug('---')
+    core.debug(taskInput)
+    core.debug('---')
+
     core.info('Running Task...')
     const taskResponse = await client.Run(taskInput)
 
-    core.debug('Task Input:')
-    core.debug('---')
-    core.debug(toPrettyJSON(taskInput))
-    core.debug('---')
-
     core.debug('Task Response:')
     core.debug('---')
-    core.debug(toPrettyJSON(taskResponse))
+    core.debug(taskResponse)
     core.debug('---')
 
     core.info('Task completed!')
@@ -25063,14 +25063,6 @@ async function run() {
 
 function getTaskInputJSONFileContents(path) {
   return fs.readFileSync(path, { encoding: 'utf8', flag: 'r' })
-}
-
-function toPrettyJSON(json) {
-  let obj = json
-  if (typeof obj === 'string') {
-    obj = JSON.parse(json)
-  }
-  return JSON.stringify(obj, null, 2)
 }
 
 module.exports = {
