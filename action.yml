@@ -8,7 +8,10 @@ inputs:
     required: true
   task-input:
     description: The defined input for the Task as a JSON encoded object
-    required: true
+    required: false
+  task-input-json-file:
+    description: The path to a local file containing to defined input for the Task as a JSON encoded object
+    required: false
   task-api-host:
     description: The hostname for the Rightbrain AI Tasks API
     required: true

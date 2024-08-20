@@ -1,5 +1,6 @@
 const core = require('@actions/core')
 const { Client } = require('./api')
+const fs = require('fs')
 
 /**
  * The main function for the action.
@@ -16,7 +17,25 @@ async function run() {
     core.info(`Project: ${client.GetProjectIdentifier()}`)
     core.info(`Task: ${client.GetTaskIdentifer()}`)
 
-    const taskInput = core.getInput('task-input')
+    let taskInput = null
+
+    if (core.getInput('task-input')) {
+      core.debug('Reading task-input from `task-input`')
+      taskInput = core.getInput('task-input')
+    }
+
+    if (core.getInput('task-input-json-file')) {
+      core.debug('Reading task-input from `task-input-json-file`')
+      taskInput = getTaskInputJSONFileContents(
+        core.getInput('task-input-json-file')
+      )
+    }
+
+    if (!taskInput) {
+      throw new Error(
+        'Either `task-input` or `task-input-json-file` is required'
+      )
+    }
 
     core.info('Running Task...')
     const taskResponse = await client.Run(taskInput)
@@ -37,6 +56,10 @@ async function run() {
     core.error('Failed to run Task', error)
     core.setFailed(error.message)
   }
+}
+
+function getTaskInputJSONFileContents(path) {
+  return fs.readFileSync(path, { encoding: 'utf8', flag: 'r' })
 }
 
 function toPrettyJSON(json) {
