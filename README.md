@@ -8,11 +8,14 @@ This GitHub Action allows you to run your [Rightbrain AI](https://rightbrain.ai/
 
 ## Understanding the Action
 
-This GitHub Action supports three inputs:
+This GitHub Action supports four inputs:
 
     task-access-token (required): A unique access token for authentication.
-    task-input (required): A JSON encoded object that defines the input for the task.
+    task-input (optional): A JSON encoded object that defines the input for the task.
+    task-input-json-file (optional): The path to a local file containing to defined input for the Task as a JSON encoded object
     task-api-host (optional): The hostname for the Rightbrain AI Tasks API, with a default value of app.rightbrain.ai.
+
+When calling the action you _must_ supply either `task-input` or `task-input-json-file`.
 
 Note: At the moment this Action does _NOT_ support file inputs to the API.
 
