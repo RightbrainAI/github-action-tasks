@@ -1,5 +1,6 @@
 const core = require('@actions/core')
 const { Client } = require('./api')
+const fs = require('fs')
 
 /**
  * The main function for the action.
@@ -16,19 +17,37 @@ async function run() {
     core.info(`Project: ${client.GetProjectIdentifier()}`)
     core.info(`Task: ${client.GetTaskIdentifer()}`)
 
-    const taskInput = core.getInput('task-input')
+    let taskInput = null
+
+    if (core.getInput('task-input')) {
+      core.debug('Reading task-input from `task-input`')
+      taskInput = core.getInput('task-input')
+    }
+
+    if (core.getInput('task-input-json-file')) {
+      core.debug('Reading task-input from `task-input-json-file`')
+      taskInput = getTaskInputJSONFileContents(
+        core.getInput('task-input-json-file')
+      )
+    }
+
+    if (!taskInput) {
+      throw new Error(
+        'Either `task-input` or `task-input-json-file` is required'
+      )
+    }
+
+    core.debug('Task Input:')
+    core.debug('---')
+    core.debug(taskInput)
+    core.debug('---')
 
     core.info('Running Task...')
     const taskResponse = await client.Run(taskInput)
 
-    core.debug('Task Input:')
-    core.debug('---')
-    core.debug(toPrettyJSON(taskInput))
-    core.debug('---')
-
     core.debug('Task Response:')
     core.debug('---')
-    core.debug(toPrettyJSON(taskResponse))
+    core.debug(taskResponse)
     core.debug('---')
 
     core.info('Task completed!')
@@ -39,12 +58,8 @@ async function run() {
   }
 }
 
-function toPrettyJSON(json) {
-  let obj = json
-  if (typeof obj === 'string') {
-    obj = JSON.parse(json)
-  }
-  return JSON.stringify(obj, null, 2)
+function getTaskInputJSONFileContents(path) {
+  return fs.readFileSync(path, { encoding: 'utf8', flag: 'r' })
 }
 
 module.exports = {
