@@ -61,47 +61,47 @@ permissions:
   issues: write
   contents: read
 jobs:
-    auto-label-issue:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Obtain Available Labels
-          id: obtain-available-labels
-          uses: actions/github-script@v7
-          with:
-            script: |
-              const res = await github.rest.issues.listLabelsForRepo({
+  auto-label-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtain Available Labels
+        id: obtain-available-labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const res = await github.rest.issues.listLabelsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+            return res.data
+      - name: Obtain Relevant Labels
+        id: obtain-relevant-labels
+        uses: RightbrainAI/github-action-tasks@main
+        with:
+          task-access-token: ${{ secrets.ISSUE_LABELLER_TASK_ACCESS_TOKEN }}
+          task-input: |
+            {
+                "title": ${{ toJSON(github.event.issue.title) }},
+                "body": ${{ toJSON(github.event.issue.body) }},
+                "labels": ${{ toJSON(steps.obtain-available-labels.outputs.result) }}
+            }
+      - name: Apply Relevant Labels
+        uses: actions/github-script@v7
+        with:
+          script: |-
+            const api = JSON.parse(${{ toJSON(steps.obtain-relevant-labels.outputs.response) }})
+
+            console.log(`We found ${ api.response.labels.length } matching labels`)
+
+            if (api.response.labels) {
+              await github.request('PUT /repos/{owner}/{repo}/issues/{issue_number}/labels', {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
+                issue_number: ${{ github.event.issue.number }},
+                labels: api.response.labels,
+                headers: {
+                  'X-GitHub-Api-Version': '2022-11-28'
+                }
               })
-              return res.data
-        - name: Obtain Relevant Labels
-          id: obtain-relevant-labels
-          uses: RightbrainAI/github-action-tasks@main
-          with:
-            task-access-token: ${{ secrets.ISSUE_LABELLER_TASK_ACCESS_TOKEN }}
-            task-input: | 
-              {
-                  "title": ${{ toJSON(github.event.issue.title) }},
-                  "body": ${{ toJSON(github.event.issue.body) }},
-                  "labels": ${{ toJSON(steps.obtain-available-labels.outputs.result) }}
-              }
-        - name: Apply Relevant Labels
-          uses: actions/github-script@v7
-          with:
-            script: |
-              const api = JSON.parse(${{ toJSON(steps.obtain-relevant-labels.outputs.response) }})
-
-              console.log(`We found ${ api.response.labels.length } matching labels`)
-
-              if (api.response.labels) {
-                await github.request('PUT /repos/{owner}/{repo}/issues/{issue_number}/labels', {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: ${{ github.event.issue.number }},
-                  labels: api.response.labels,
-                  headers: {
-                    'X-GitHub-Api-Version': '2022-11-28'
-                  }
-                })
-              }
+            }
 ```
