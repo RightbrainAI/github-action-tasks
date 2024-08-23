@@ -4,7 +4,7 @@ This guide demonstrates how to use the Rightbrain Tasks API to generate a non-te
 
 ## Configuration
 
-To execute this task, you need to create a Task using the [Rightbrain Tasks API](https://docs.rightbrain.ai/api-reference/tasks/create-task) with the following configuration:
+To run this task, you need to create a Task using the [Rightbrain Tasks API](https://docs.rightbrain.ai/api-reference/tasks/create-task) with the following configuration:
 
 ### Task Options
 
@@ -16,7 +16,7 @@ To execute this task, you need to create a Task using the [Rightbrain Tasks API]
 
 ### Prompt
 
-While the Task is designed to produce a non-technical summary for PRs, you can customize the prompt to suit different audiences:
+While the Task is designed to produce a non-technical summary for PRs, you can customize the prompt to suit different audiences or personas:
 
 ```
   You are an expert software program specifically designed for the software industry that will be used to provide a summary of a Pull Request to a team so that they can quickly understand the impact of the change proposed.
@@ -46,7 +46,9 @@ While the Task is designed to produce a non-technical summary for PRs, you can c
 
 ### GitHub Actions Workflow
 
-After creating the Task, you will receive a unique Access Token. Store this token as an Actions Repository Secret named NON_TECHNICAL_SUMMARY_TASK_ACCESS_TOKEN. This token will be used in the following Workflow. The Workflow consists of a single Job with four key Steps:
+After creating the Task, you will receive a unique Access Token. Store this token as a GitHub Actions Repository Secret named NON_TECHNICAL_SUMMARY_TASK_ACCESS_TOKEN. This token will be used in our Workflow.
+
+The Workflow consists of a single Job with four key Steps:
 
 - Build Task Input: Gathers the necessary data (e.g., PR title, description, and diff) to pass to the Task.
 - Obtain Summary: Calls the Task with the provided input to generate the summary.
@@ -105,7 +107,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            :wave: I'm a :bot:, and this is an automatic Rightbrain AI Task that provides a **non-technical** summary for this PR.
+            :wave: I'm a :bot:, and this is a Rightbrain Task that provides an automated **non-technical** summary for this PR.
 
             ${{ fromJSON(steps.obtain-summary.outputs.response).response.summary }}
 
