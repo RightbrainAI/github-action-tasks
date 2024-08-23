@@ -1,10 +1,10 @@
 # GitHub Action for the Rightbrain Tasks API
 
-Rightbrain Tasks allow developers to create custom API endpoints that process multimodal inputs (text and/or images) using predefined prompts. These endpoints generate structured, configurable outputs, tailored to the developer’s specific requirements.
+[Rightbrain](https://rightbrain.ai/) Tasks allow developers to create custom API endpoints that process multimodal inputs (text and/or images) using predefined prompts. These endpoints generate structured, configurable outputs, tailored to the developer’s specific requirements.
 
 You can read more about Rightbrain Tasks over on the [Rightbrain AI docs](https://docs.rightbrain.ai).
 
-This GitHub Action allows you to run your [Rightbrain AI](https://rightbrain.ai/) Tasks within GitHub Actions Workflows.
+This GitHub Action allows you to run your [Rightbrain](https://rightbrain.ai/) Tasks within GitHub Actions Workflows.
 
 ## Understanding the Action
 
