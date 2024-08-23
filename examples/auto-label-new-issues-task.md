@@ -16,7 +16,7 @@ To run this task, you need to create a Task using the [Rightbrain Tasks API](htt
 
 ### Prompt
 
-Here we're going to ask the selected LLM to look at all the available labels, then filter them by using the Issue title and description.
+Here we're going to ask the selected LLM to look at all the available labels, then filter them by using the issue title and body.
 
 ```
     Your purpose is to analyse a list of JSON formatted labels and return a filtered list of labels that are deemed relevant to a given GitHub Issue.
@@ -39,7 +39,6 @@ Here we're going to ask the selected LLM to look at all the available labels, th
     If you are unsure of a given label, please lean towards omitting it rather than including it.
 
     Return the matching labels as a list of label names.
-
 ```
 
 ### GitHub Actions Workflow
