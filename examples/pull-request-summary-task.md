@@ -91,7 +91,7 @@ jobs:
             fs.writeFileSync(process.env.TASK_INPUT_JSON_FILE, JSON.stringify(taskInputs))
       - name: Obtain Summary
         id: obtain-summary
-        uses: RightbrainAI/github-action-tasks@main
+        uses: RightbrainAI/github-action-tasks@v1.0.1
         with:
           task-access-token: ${{ secrets.NON_TECHNICAL_SUMMARY_TASK_ACCESS_TOKEN }}
           task-input-json-file: ${{ env.TASK_INPUT_JSON_FILE }}

@@ -76,7 +76,7 @@ jobs:
             return res.data
       - name: Obtain Relevant Labels
         id: obtain-relevant-labels
-        uses: RightbrainAI/github-action-tasks@main
+        uses: RightbrainAI/github-action-tasks@v1.0.1
         with:
           task-access-token: ${{ secrets.ISSUE_LABELLER_TASK_ACCESS_TOKEN }}
           task-input: |
