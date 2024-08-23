@@ -1,6 +1,6 @@
 # Auto-Label New Issues Task
 
-This guide demonstrates how to use the Rightbrain Tasks API to automatically label any new GitHub Issues created within a repository with a matching set of labels.
+This example demonstrates how to use the Rightbrain Tasks API to automatically label any new GitHub Issues created within a repository with a matching set of labels.
 
 ## Configuration
 
