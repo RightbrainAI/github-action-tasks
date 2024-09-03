@@ -1,3 +1,5 @@
+const { error } = require('@actions/core')
+
 class AccessToken {
   constructor(accessToken) {
     this.decodedAccessToken = this.DecodeAccessToken(accessToken)
@@ -31,13 +33,26 @@ class AccessToken {
         throw new Error(`expected 3 segments but got ${segments.length}`)
       }
       // base64 decode, then parse the JWT payload
-      try {
-        return JSON.parse(atob(segments[1]))
-      } catch (e) {
-        throw new Error('cannot parse payload', { cause: e })
-      }
+      return JSON.parse(atob(segments[1]))
     } catch (e) {
-      throw new Error(`Error decoding access token, ${e.message}`, { cause: e })
+      switch (e.name) {
+        // JSON.parse error
+        case 'SyntaxError':
+          throw new Error(
+            'Error decoding access token, payload cannot be parsed',
+            { cause: e }
+          )
+        // atob error
+        case 'InvalidCharacterError':
+          throw new Error(
+            'Error decoding access token, payload cannot be decoded',
+            { cause: e }
+          )
+        default:
+          throw new Error(`Error decoding access token, ${e.message}`, {
+            cause: e
+          })
+      }
     }
   }
 

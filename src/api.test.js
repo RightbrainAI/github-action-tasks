@@ -61,12 +61,12 @@ describe('AccessToken Class', () => {
 
   test('should throw error with invalid access token payload', () => {
     expect(() => {
-      const invalidAccessTokenPayload = `header.null.signature`
+      const invalidAccessTokenPayload = `header.⛌.signature`
       new AccessToken(invalidAccessTokenPayload)
-    }).toThrow('Error decoding access token, cannot parse payload')
+    }).toThrow('Error decoding access token, payload cannot be decoded')
     expect(() => {
       const invalidAccessTokenPayload = `header.${btoa('{,')}.signature`
       new AccessToken(invalidAccessTokenPayload)
-    }).toThrow('Error decoding access token, cannot parse payload')
+    }).toThrow('Error decoding access token, payload cannot be parsed')
   })
 })
