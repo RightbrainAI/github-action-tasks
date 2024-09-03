@@ -24919,79 +24919,94 @@ exports["default"] = _default;
 /***/ 612:
 /***/ ((module) => {
 
-function AccessToken(accessToken) {
-  this.accessToken = accessToken
-  this.GetProjectIdentifier = function () {
-    return this.DecodeAccessToken().ext.project_id
+class AccessToken {
+  constructor(accessToken) {
+    this.decodedAccessToken = this.DecodeAccessToken(accessToken)
+    this.encodedAccessToken = accessToken
   }
-  this.GetOrganizationIdentifier = function () {
-    return this.DecodeAccessToken().ext.org_id
+
+  GetProjectIdentifier() {
+    return this.decodedAccessToken.ext.project_id
   }
-  this.GetTaskIdentifer = function () {
-    for (const aud of this.DecodeAccessToken().aud) {
+
+  GetOrganizationIdentifier() {
+    return this.decodedAccessToken.ext.org_id
+  }
+
+  GetTaskIdentifer() {
+    for (const aud of this.decodedAccessToken.aud) {
       if (aud.includes('https://aud.rightbrain.ai/tasks/')) {
         return aud.split('/').pop()
       }
     }
-    throw new Error('access token contains no task identifier')
   }
-  this.DecodeAccessToken = function () {
-    const data = this.accessToken.split('.')[1]
-    return JSON.parse(atob(data))
+
+  DecodeAccessToken(accessToken) {
+    try {
+      if (accessToken.trim().length === 0) {
+        throw new Error('access token must not be empty')
+      }
+      // segments contain header, payload, and signature
+      const segments = accessToken.split('.')
+      if (segments.length !== 3) {
+        throw new Error(`expected 3 segments but got ${segments.length}`)
+      }
+      // base64 decode, then parse the JWT payload
+      try {
+        return JSON.parse(atob(segments[1]))
+      } catch (e) {
+        throw new Error('cannot parse payload', { cause: e })
+      }
+    } catch (e) {
+      throw new Error(`Error decoding access token, ${e.message}`, { cause: e })
+    }
   }
-  this.String = function () {
-    return this.accessToken
+
+  String() {
+    return this.encodedAccessToken
   }
 }
 
-function Client(host, accessToken) {
-  this.host = host
-  this.accessToken = new AccessToken(accessToken)
-  this.Run = async function (taskInput) {
-    if (this.isInvalidTaskInputJSON(taskInput)) {
-      throw new Error(
-        'Error running Task, expected task input to be valid JSON data'
-      )
+class Client {
+  constructor(host, accessToken) {
+    this.host = host
+    this.accessToken = accessToken
+    this.Run = async function (taskInput) {
+      this.assertTaskInputIsJSON(taskInput)
+      const formData = new FormData()
+      formData.append('task_input', taskInput)
+      const response = await fetch(this.getTaskRunURL(), {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.accessToken.String()}`
+        },
+        body: formData
+      })
+      if (response.status !== 200) {
+        throw new Error(
+          `Error running Task, expected status code of 200, but got ${response.status}`
+        )
+      }
+      return await response.json()
     }
-    const formData = new FormData()
-    formData.append('task_input', taskInput)
-    const response = await fetch(this.getTaskRunURL(), {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${this.accessToken.String()}`
-      },
-      body: formData
-    })
-    if (response.status !== 200) {
-      throw new Error(
-        `Error running Task, expected status code of 200, but got ${response.status}`
-      )
+    this.getTaskRunURL = function () {
+      return `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
     }
-    return await response.json()
-  }
-  this.getTaskRunURL = function () {
-    return `https://${this.host}/api/v1/org/${this.GetOrganizationIdentifier()}/project/${this.GetProjectIdentifier()}/task/${this.GetTaskIdentifer()}/run`
-  }
-  this.GetProjectIdentifier = function () {
-    return this.accessToken.GetProjectIdentifier()
-  }
-  this.GetOrganizationIdentifier = function () {
-    return this.accessToken.GetOrganizationIdentifier()
-  }
-  this.GetTaskIdentifer = function () {
-    return this.accessToken.GetTaskIdentifer()
-  }
-  this.isInvalidTaskInputJSON = function (taskInput) {
-    try {
-      JSON.parse(taskInput)
-    } catch (e) {
-      return true
+    this.assertTaskInputIsJSON = function (taskInput) {
+      try {
+        JSON.parse(taskInput)
+      } catch (e) {
+        throw new Error(
+          'Error running Task, expected task input to be valid JSON data',
+          { cause: e }
+        )
+      }
     }
-    return false
   }
 }
 
 module.exports = {
+  AccessToken,
   Client
 }
 
@@ -25002,7 +25017,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(2186)
-const { Client } = __nccwpck_require__(612)
+const { AccessToken, Client } = __nccwpck_require__(612)
 const fs = __nccwpck_require__(7147)
 
 /**
@@ -25011,14 +25026,13 @@ const fs = __nccwpck_require__(7147)
  */
 async function run() {
   try {
-    const client = new Client(
-      core.getInput('task-api-host'),
-      core.getInput('task-access-token')
-    )
-    core.info('Created Rightbrain AI Tasks client:')
-    core.info(`Organization: ${client.GetOrganizationIdentifier()}`)
-    core.info(`Project: ${client.GetProjectIdentifier()}`)
-    core.info(`Task: ${client.GetTaskIdentifer()}`)
+    const accessToken = new AccessToken(core.getInput('task-access-token'))
+    const client = new Client(core.getInput('task-api-host'), accessToken)
+
+    core.info('Created Rightbrain AI Tasks client.')
+    core.info(`Organization: ${accessToken.GetOrganizationIdentifier()}`)
+    core.info(`Project: ${accessToken.GetProjectIdentifier()}`)
+    core.info(`Task: ${accessToken.GetTaskIdentifer()}`)
 
     let taskInput = null
 

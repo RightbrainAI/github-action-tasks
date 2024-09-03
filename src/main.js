@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { Client } = require('./api')
+const { AccessToken, Client } = require('./api')
 const fs = require('fs')
 
 /**
@@ -8,14 +8,13 @@ const fs = require('fs')
  */
 async function run() {
   try {
-    const client = new Client(
-      core.getInput('task-api-host'),
-      core.getInput('task-access-token')
-    )
-    core.info('Created Rightbrain AI Tasks client:')
-    core.info(`Organization: ${client.GetOrganizationIdentifier()}`)
-    core.info(`Project: ${client.GetProjectIdentifier()}`)
-    core.info(`Task: ${client.GetTaskIdentifer()}`)
+    const accessToken = new AccessToken(core.getInput('task-access-token'))
+    const client = new Client(core.getInput('task-api-host'), accessToken)
+
+    core.info('Created Rightbrain AI Tasks client.')
+    core.info(`Organization: ${accessToken.GetOrganizationIdentifier()}`)
+    core.info(`Project: ${accessToken.GetProjectIdentifier()}`)
+    core.info(`Task: ${accessToken.GetTaskIdentifer()}`)
 
     let taskInput = null
 
