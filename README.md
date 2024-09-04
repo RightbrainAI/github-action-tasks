@@ -12,7 +12,7 @@ This GitHub Action supports four inputs:
 
     task-access-token (required): A unique access token for authentication.
     task-input (optional): A JSON encoded object that defines the input for the task.
-    task-input-json-file (optional): The path to a local file containing to defined input for the Task as a JSON encoded object
+    task-input-json-file (optional): The path to a local file containing the defined input for the Task as a JSON encoded object
     task-api-host (optional): The hostname for the Rightbrain AI Tasks API, with a default value of app.rightbrain.ai.
 
 When calling the action you _must_ supply either `task-input` or `task-input-json-file`.
