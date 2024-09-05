@@ -8,20 +8,20 @@ To run this task, you need to create a Task using the [Rightbrain Tasks API](htt
 
 ### Task Options
 
-    **Name:** A non-technical summary of a GitHub Pull Request
-    **Description:** Generates a summary for a given Pull Request using Rightbrain AI
-    **LLM Model:** gpt-4o
-    **Output Format:** summary of type str
-    **Image Required:** false
+    Name: A non-technical summary of a GitHub Pull Request
+    Description: Generates a summary for a given Pull Request using Rightbrain AI
+    LLM Model: gpt-4o
+    Output Format: summary of type str
+    Image Required: false
 
 ### Prompt
 
 While the Task is designed to produce a non-technical summary for PRs, you can customize the prompt to suit different audiences or personas:
 
 ```
-  **System Prompt:** You are an expert software program specifically designed for the software industry that will be used to provide a summary of a Pull Request to a team so that they can quickly understand the impact of the change proposed.
+  System Prompt: You are an expert software program specifically designed for the software industry that will be used to provide a summary of a Pull Request to a team so that they can quickly understand the impact of the change proposed.
 
-  **User Prompt:** Compose a summary of a Pull Request following these guidelines:
+  User Prompt: Compose a summary of a Pull Request following these guidelines:
 
   - Consider that the audience will be a team with no technical experience
   - Use non-technical language to summarise the changes
