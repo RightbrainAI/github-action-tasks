@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { AccessToken, Client } = require('./api')
+const { AccessToken, Client, TaskInputTooLargeError } = require('./api')
 const fs = require('fs')
 
 /**
