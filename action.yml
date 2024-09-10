@@ -16,6 +16,9 @@ inputs:
     description: The hostname for the Rightbrain AI Tasks API
     required: true
     default: app.rightbrain.ai
+  task-revision:
+    description: When supplied, this will use the specified revision of the Task applicable to the Access Token
+    required: false
 
 outputs:
   response:

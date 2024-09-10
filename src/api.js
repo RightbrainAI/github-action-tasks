@@ -1,5 +1,3 @@
-const { error } = require('@actions/core')
-
 class AccessToken {
   constructor(accessToken) {
     this.decodedAccessToken = this.DecodeAccessToken(accessToken)
@@ -83,8 +81,12 @@ class Client {
       }
       return await response.json()
     }
-    this.getTaskRunURL = function () {
-      return `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
+    this.getTaskRunURL = function (revision) {
+      let url = `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
+      if (revision) {
+        url += `?revision=${revision}`
+      }
+      return url
     }
     this.assertTaskInputIsJSON = function (taskInput) {
       try {

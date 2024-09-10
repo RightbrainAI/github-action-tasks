@@ -24917,9 +24917,7 @@ exports["default"] = _default;
 /***/ }),
 
 /***/ 612:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const { error } = __nccwpck_require__(2186)
+/***/ ((module) => {
 
 class AccessToken {
   constructor(accessToken) {
@@ -25004,8 +25002,12 @@ class Client {
       }
       return await response.json()
     }
-    this.getTaskRunURL = function () {
-      return `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
+    this.getTaskRunURL = function (revision) {
+      let url = `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
+      if (revision) {
+        url += `?revision=${revision}`
+      }
+      return url
     }
     this.assertTaskInputIsJSON = function (taskInput) {
       try {
