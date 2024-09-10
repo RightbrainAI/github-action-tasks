@@ -44,29 +44,29 @@ describe('AccessToken Class', () => {
   test('should throw error with empty access token', () => {
     expect(() => {
       new AccessToken('')
-    }).toThrow('Error decoding access token, access token must not be empty')
+    }).toThrow('error decoding access token, access token must not be empty')
   })
 
   test('should throw error with invalid access token segment count', () => {
     expect(() => {
       new AccessToken('one')
-    }).toThrow('Error decoding access token, expected 3 segments but got 1')
+    }).toThrow('error decoding access token, expected 3 segments but got 1')
     expect(() => {
       new AccessToken('one.two')
-    }).toThrow('Error decoding access token, expected 3 segments but got 2')
+    }).toThrow('error decoding access token, expected 3 segments but got 2')
     expect(() => {
       new AccessToken('one.two.three.four')
-    }).toThrow('Error decoding access token, expected 3 segments but got 4')
+    }).toThrow('error decoding access token, expected 3 segments but got 4')
   })
 
   test('should throw error with invalid access token payload', () => {
     expect(() => {
       const invalidAccessTokenPayload = `header.⛌.signature`
       new AccessToken(invalidAccessTokenPayload)
-    }).toThrow('Error decoding access token, payload cannot be decoded')
+    }).toThrow('error decoding access token, payload cannot be decoded')
     expect(() => {
       const invalidAccessTokenPayload = `header.${btoa('{,')}.signature`
       new AccessToken(invalidAccessTokenPayload)
-    }).toThrow('Error decoding access token, payload cannot be parsed')
+    }).toThrow('error decoding access token, payload cannot be parsed')
   })
 })

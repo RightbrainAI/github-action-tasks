@@ -24919,6 +24919,47 @@ exports["default"] = _default;
 /***/ 612:
 /***/ ((module) => {
 
+const TaskInputSizeMaxSize = 128000
+
+class TaskInputTooLargeError extends Error {
+  constructor(taskInputSize, options) {
+    super(
+      `task input is too large, maximum size is ${TaskInputSizeMaxSize}, but got ${taskInputSize}`,
+      options
+    )
+  }
+}
+
+class EmptyAccessTokenError extends Error {
+  constructor(options) {
+    super(
+      'error decoding access token, access token must not be empty',
+      options
+    )
+  }
+}
+
+class InvalidAccessTokenSegmentsError extends Error {
+  constructor(segmentLength, options) {
+    super(
+      `error decoding access token, expected 3 segments but got ${segmentLength}`,
+      options
+    )
+  }
+}
+
+class AccessTokenPayloadParsingError extends Error {
+  constructor(options) {
+    super('error decoding access token, payload cannot be parsed', options)
+  }
+}
+
+class AccessTokenPayloadDecodingError extends Error {
+  constructor(options) {
+    super('error decoding access token, payload cannot be decoded', options)
+  }
+}
+
 class AccessToken {
   constructor(accessToken) {
     this.decodedAccessToken = this.DecodeAccessToken(accessToken)
@@ -24944,12 +24985,12 @@ class AccessToken {
   DecodeAccessToken(accessToken) {
     try {
       if (accessToken.trim().length === 0) {
-        throw new Error('access token must not be empty')
+        throw new EmptyAccessTokenError()
       }
       // segments contain header, payload, and signature
       const segments = accessToken.split('.')
       if (segments.length !== 3) {
-        throw new Error(`expected 3 segments but got ${segments.length}`)
+        throw new InvalidAccessTokenSegmentsError(segments.length)
       }
       // base64 decode, then parse the JWT payload
       return JSON.parse(atob(segments[1]))
@@ -24957,20 +24998,12 @@ class AccessToken {
       switch (e.name) {
         // JSON.parse error
         case 'SyntaxError':
-          throw new Error(
-            'Error decoding access token, payload cannot be parsed',
-            { cause: e }
-          )
+          throw new AccessTokenPayloadParsingError({ cause: e })
         // atob error
         case 'InvalidCharacterError':
-          throw new Error(
-            'Error decoding access token, payload cannot be decoded',
-            { cause: e }
-          )
+          throw new AccessTokenPayloadDecodingError({ cause: e })
         default:
-          throw new Error(`Error decoding access token, ${e.message}`, {
-            cause: e
-          })
+          throw e
       }
     }
   }
@@ -24986,6 +25019,7 @@ class Client {
     this.accessToken = accessToken
     this.Run = async function (taskInput) {
       this.assertTaskInputIsJSON(taskInput)
+      this.assertTaskInputSize(taskInput)
       const formData = new FormData()
       formData.append('task_input', taskInput)
       const response = await fetch(this.getTaskRunURL(), {
@@ -25017,6 +25051,11 @@ class Client {
           'Error running Task, expected task input to be valid JSON data',
           { cause: e }
         )
+      }
+    }
+    this.assertTaskInputSize = function (taskInput) {
+      if (taskInput.length > TaskInputSizeMaxSize) {
+        throw new TaskInputTooLargeError(taskInput.length)
       }
     }
   }
