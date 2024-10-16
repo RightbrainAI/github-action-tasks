@@ -8,13 +8,17 @@ const fs = require('fs')
  */
 async function run() {
   try {
-    const accessToken = new AccessToken(core.getInput('task-access-token'))
-    const client = new Client(core.getInput('task-api-host'), accessToken)
+    const client = new Client(
+      core.getInput('task-api-host'),
+      core.getInput('organization-id'),
+      core.getInput('project-id'),
+      core.getInput('task-access-token')
+    )
 
     core.info('Created Rightbrain AI Tasks client.')
-    core.info(`Organization: ${accessToken.GetOrganizationIdentifier()}`)
-    core.info(`Project: ${accessToken.GetProjectIdentifier()}`)
-    core.info(`Task: ${accessToken.GetTaskIdentifer()}`)
+    core.info(`Organization: ${core.getInput('organization-id')}`)
+    core.info(`Project: ${core.getInput('project-id')}`)
+    core.info(`Task: ${core.getInput('task-id')}`)
 
     let taskInput = null
 
@@ -42,7 +46,11 @@ async function run() {
     core.debug('---')
 
     core.info('Running Task...')
-    const taskResponse = await client.Run(taskInput)
+    const taskResponse = await client.Run(
+      core.getInput('task-id'),
+      taskInput,
+      core.getInput('task-revision')
+    )
 
     core.debug('Task Response:')
     core.debug('---')

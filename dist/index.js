@@ -24930,116 +24930,33 @@ class TaskInputTooLargeError extends Error {
   }
 }
 
-class EmptyAccessTokenError extends Error {
-  constructor(options) {
-    super(
-      'error decoding access token, access token must not be empty',
-      options
-    )
-  }
-}
-
-class InvalidAccessTokenSegmentsError extends Error {
-  constructor(segmentLength, options) {
-    super(
-      `error decoding access token, expected 3 segments but got ${segmentLength}`,
-      options
-    )
-  }
-}
-
-class AccessTokenPayloadParsingError extends Error {
-  constructor(options) {
-    super('error decoding access token, payload cannot be parsed', options)
-  }
-}
-
-class AccessTokenPayloadDecodingError extends Error {
-  constructor(options) {
-    super('error decoding access token, payload cannot be decoded', options)
-  }
-}
-
-class AccessToken {
-  constructor(accessToken) {
-    this.decodedAccessToken = this.DecodeAccessToken(accessToken)
-    this.encodedAccessToken = accessToken
-  }
-
-  GetProjectIdentifier() {
-    return this.decodedAccessToken.ext.project_id
-  }
-
-  GetOrganizationIdentifier() {
-    return this.decodedAccessToken.ext.org_id
-  }
-
-  GetTaskIdentifer() {
-    for (const aud of this.decodedAccessToken.aud) {
-      if (aud.includes('https://aud.rightbrain.ai/tasks/')) {
-        return aud.split('/').pop()
-      }
-    }
-  }
-
-  DecodeAccessToken(accessToken) {
-    try {
-      if (accessToken.trim().length === 0) {
-        throw new EmptyAccessTokenError()
-      }
-      // segments contain header, payload, and signature
-      const segments = accessToken.split('.')
-      if (segments.length !== 3) {
-        throw new InvalidAccessTokenSegmentsError(segments.length)
-      }
-      // base64 decode, then parse the JWT payload
-      return JSON.parse(atob(segments[1]))
-    } catch (e) {
-      switch (e.name) {
-        // JSON.parse error
-        case 'SyntaxError':
-          throw new AccessTokenPayloadParsingError({ cause: e })
-        // atob error
-        case 'InvalidCharacterError':
-          throw new AccessTokenPayloadDecodingError({ cause: e })
-        default:
-          throw e
-      }
-    }
-  }
-
-  String() {
-    return this.encodedAccessToken
-  }
-}
-
 class Client {
-  constructor(host, accessToken) {
+  constructor(host, orgID, projectID, accessToken) {
     this.host = host
+    this.orgID = orgID
+    this.projectID = projectID
     this.accessToken = accessToken
-    this.Run = async function (taskInput) {
+    this.Run = async function (taskID, taskInput, taskRevision) {
       this.assertTaskInputIsJSON(taskInput)
       this.assertTaskInputSize(taskInput)
-      const formData = new FormData()
-      formData.append('task_input', taskInput)
-      const response = await fetch(this.getTaskRunURL(), {
+      const response = await fetch(this.getTaskRunURL(taskID, taskRevision), {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.accessToken.String()}`
+          Authorization: `Bearer ${this.accessToken}`
         },
-        body: formData
+        body: this.getTaskInputFormData(taskInput)
       })
       if (response.status !== 200) {
         throw new Error(
-          `Error running Task, expected status code of 200, but got ${response.status}`
+          `Error running Task, expected status code of 200, but got ${response.status}: ${response.statusText}`
         )
       }
       return await response.json()
     }
-    this.getTaskRunURL = function (revision) {
-      let url = `https://${this.host}/api/v1/org/${this.accessToken.GetOrganizationIdentifier()}/project/${this.accessToken.GetProjectIdentifier()}/task/${this.accessToken.GetTaskIdentifer()}/run`
-      if (revision) {
-        url += `?revision=${revision}`
+    this.getTaskRunURL = function (taskID, taskRevision) {
+      let url = `https://${this.host}/api/v1/org/${this.orgID}/project/${this.projectID}/task/${taskID}/run`
+      if (taskRevision) {
+        url += `?revision=${taskRevision}`
       }
       return url
     }
@@ -25058,11 +24975,15 @@ class Client {
         throw new TaskInputTooLargeError(taskInput.length)
       }
     }
+    this.getTaskInputFormData = function (taskInput) {
+      const formData = new FormData()
+      formData.append('task_input', taskInput)
+      return formData
+    }
   }
 }
 
 module.exports = {
-  AccessToken,
   Client
 }
 
@@ -25082,13 +25003,17 @@ const fs = __nccwpck_require__(7147)
  */
 async function run() {
   try {
-    const accessToken = new AccessToken(core.getInput('task-access-token'))
-    const client = new Client(core.getInput('task-api-host'), accessToken)
+    const client = new Client(
+      core.getInput('task-api-host'),
+      core.getInput('organization-id'),
+      core.getInput('project-id'),
+      core.getInput('task-access-token')
+    )
 
     core.info('Created Rightbrain AI Tasks client.')
-    core.info(`Organization: ${accessToken.GetOrganizationIdentifier()}`)
-    core.info(`Project: ${accessToken.GetProjectIdentifier()}`)
-    core.info(`Task: ${accessToken.GetTaskIdentifer()}`)
+    core.info(`Organization: ${core.getInput('organization-id')}`)
+    core.info(`Project: ${core.getInput('project-id')}`)
+    core.info(`Task: ${core.getInput('task-id')}`)
 
     let taskInput = null
 
@@ -25116,7 +25041,11 @@ async function run() {
     core.debug('---')
 
     core.info('Running Task...')
-    const taskResponse = await client.Run(taskInput)
+    const taskResponse = await client.Run(
+      core.getInput('task-id'),
+      taskInput,
+      core.getInput('task-revision')
+    )
 
     core.debug('Task Response:')
     core.debug('---')

@@ -6,6 +6,9 @@ inputs:
   task-access-token:
     description: The unique Access Token for the Task
     required: true
+  task-id:
+    description: The ID of the Task
+    required: true
   task-input:
     description: The defined input for the Task as a JSON encoded object
     required: false
@@ -19,6 +22,12 @@ inputs:
   task-revision:
     description: When supplied, this will use the specified revision of the Task applicable to the Access Token
     required: false
+  organization-id:
+    description: The ID of the Organization in which the Task belongs
+    required: true
+  project-id:
+    description: The ID of the Project in which the Task belongs
+    required: true
 
 outputs:
   response:
