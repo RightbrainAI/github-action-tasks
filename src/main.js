@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { AccessToken, Client } = require('./api')
+const { WhoAmIClient, TaskClient } = require('./api')
 const fs = require('fs')
 
 /**
@@ -8,16 +8,22 @@ const fs = require('fs')
  */
 async function run() {
   try {
-    const client = new Client(
-      core.getInput('task-api-host'),
-      core.getInput('organization-id'),
-      core.getInput('project-id'),
+    const whoAmIClient = new WhoAmIClient(core.getInput('task-api-host'))
+    core.info('Created Rightbrain AI Tasks WhoAmI client.')
+
+    const clientDetails = await whoAmIClient.GetClientDetails(
       core.getInput('task-access-token')
     )
+    core.info(`Organization: ${clientDetails.org_id}`)
+    core.info(`Project: ${clientDetails.project_id}`)
 
+    const taskClient = new TaskClient(
+      core.getInput('task-api-host'),
+      clientDetails.org_id,
+      clientDetails.project_id,
+      core.getInput('task-access-token')
+    )
     core.info('Created Rightbrain AI Tasks client.')
-    core.info(`Organization: ${core.getInput('organization-id')}`)
-    core.info(`Project: ${core.getInput('project-id')}`)
     core.info(`Task: ${core.getInput('task-id')}`)
 
     let taskInput = null
@@ -46,7 +52,7 @@ async function run() {
     core.debug('---')
 
     core.info('Running Task...')
-    const taskResponse = await client.Run(
+    const taskResponse = await taskClient.Run(
       core.getInput('task-id'),
       taskInput,
       core.getInput('task-revision')
