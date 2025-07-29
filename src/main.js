@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { WhoAmIClient, TaskClient } = require('./api')
+const { TaskClientConfig, TaskClient } = require('./api')
 const fs = require('fs')
 
 /**
@@ -9,9 +9,12 @@ const fs = require('fs')
 async function run() {
   try {
     const taskClient = new TaskClient(
-      core.getInput('task-api-host'),
-      core.getInput('organization-id'),
-      core.getInput('project-id'),
+      new TaskClientConfig(
+        core.getInput('task-api-host'),
+        core.getInput('organization-id'),
+        core.getInput('project-id'),
+        core.getInput('task-input-max-length')
+      ),
       core.getInput('task-access-token')
     )
 

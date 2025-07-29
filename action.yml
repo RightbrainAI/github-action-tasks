@@ -15,6 +15,10 @@ inputs:
   task-input-json-file:
     description: The path to a local file containing to defined input for the Task as a JSON encoded object
     required: false
+  task-input-max-length:
+    description: The maximum length of the input for the Task
+    required: false
+    default: '128000'
   task-api-host:
     description: The hostname for the Rightbrain AI Tasks API
     required: true
