@@ -3,19 +3,26 @@ const TaskInputSizeMaxSize = 128000
 const defaultApiVersion = 'v1'
 
 class TaskInputTooLargeError extends Error {
-  constructor(taskInputSize, options) {
+  constructor(taskInputSize, taskInputMaxSize, options) {
     super(
-      `task input is too large, maximum size is ${TaskInputSizeMaxSize}, but got ${taskInputSize}`,
+      `task input is too large, maximum size is ${taskInputMaxSize}, but got ${taskInputSize}`,
       options
     )
   }
 }
 
-class TaskClient {
-  constructor(host, orgID, projectID, accessToken) {
+class TaskClientConfig {
+  constructor(host, orgID, projectID, taskInputMaxSize) {
     this.host = host
     this.orgID = orgID
     this.projectID = projectID
+    this.taskInputMaxSize = parseInt(taskInputMaxSize, 10)
+  }
+}
+
+class TaskClient {
+  constructor(config, accessToken) {
+    this.config = config
     this.accessToken = accessToken
   }
 
@@ -42,7 +49,7 @@ class TaskClient {
   }
 
   async getTaskRunURL(taskID, taskRevision) {
-    let url = `https://${this.host}/api/${defaultApiVersion}/org/${this.orgID}/project/${this.projectID}/task/${taskID}/run`
+    let url = `https://${this.config.host}/api/${defaultApiVersion}/org/${this.config.orgID}/project/${this.config.projectID}/task/${taskID}/run`
     if (taskRevision) {
       url += `?revision_id=${taskRevision}`
     }
@@ -73,8 +80,11 @@ class TaskClient {
   }
 
   assertTaskInputSize(taskInput) {
-    if (taskInput.length > TaskInputSizeMaxSize) {
-      throw new TaskInputTooLargeError(taskInput.length)
+    if (taskInput.length > this.config.taskInputMaxSize) {
+      throw new TaskInputTooLargeError(
+        taskInput.length,
+        this.config.taskInputMaxSize
+      )
     }
   }
 
@@ -86,5 +96,6 @@ class TaskClient {
 }
 
 module.exports = {
+  TaskClientConfig,
   TaskClient
 }
